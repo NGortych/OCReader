@@ -14,7 +14,7 @@
     <string name="scan_button_text">Zrób zdjęcie</string>
     <string name="open_button_text">Otwórz zdjęcie</string>
     <string name="open_in_other_button_text">Otwórz w innej</string>
-    <string name="about">O aplikacji</string>
+    <string name="about">O aplikaacji</string>
     <string name="binarization_on">Binaryzacja włączona</string>
     <string name="options">Opcje</string>
     <string name="binarization_in_progres">Binaryzacja obrazu</string>

@@ -1,0 +1,36 @@
+<resources>
+
+    <string-array name="compression_arrays">
+        <item>Niska</item>
+        <item>Średnia</item>
+        <item>Wysoka</item>
+    </string-array>
+
+
+    <string name="app_name">OCReader</string>
+    <string name="info">Czytnik tekstu.</string>
+    <string name="author">Dul Piotr &amp; Gortych Nikodem 2017.</string>
+    <string name="scan_results">Wyniki skanowania:</string>
+    <string name="scan_button_text">Zrób zdjęcie</string>
+    <string name="open_button_text">Otwórz zdjęcie</string>
+    <string name="open_in_other_button_text">Otwórz w innej</string>
+    <string name="about">O aplikacji</string>
+    <string name="binarization_on">Binaryzacja włączona</string>
+    <string name="options">Opcje</string>
+    <string name="binarization_in_progres">Binaryzacja obrazu</string>
+    <string name="please_wait">Proszę czekać...</string>
+    <string name="run_scan">Rozpocznij skanowanie!</string>
+    <string name="select_image">Wybierz obraz...</string>
+    <string name="permission_dendied">Brak dostępu!</string>
+    <string name="scan_fail">Błąd! Nie znaleziono tekstu.</string>
+    <string name="low_storage">Mało miejsca w pamięci urządzenia.</string>
+    <string name="detector_fail">Nie można ustawić skanera.</string>
+    <string name="load_fail">Nie można załadować!</string>
+    <string name="binarization">Binaryzacja</string>
+    <string name="quality">Kompresja</string>
+    <string name="binarization_treshold">Próg binaryzacji</string>
+    <string name="save">Zapisać ustawienia na stałe?</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="save_edit">Zapisać wprowadzone zmiany?</string>
+</resources>

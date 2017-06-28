@@ -7,7 +7,7 @@
     </string-array>
 
 
-    <string name="app_name">dsasadOCReader</string>
+    <string name="app_name">OCReader</string>
     <string name="info">Czytnik tekstu.</string>
     <string name="author">Dul Piotr &amp; Gortych Nikodem 2017.</string>
     <string name="scan_results">Wyniki skanowania:</string>
@@ -33,4 +33,8 @@
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="save_edit">Zapisać wprowadzone zmiany?</string>
+    <string name="saved">Zapisano</string>
+    <string name="save_fail">Błąd zapisu</string>
+    <string name="add_name">Podaj nazwę!</string>
+    <string name="cant_send">Nie można wysłać! Nic nie zeskanowano!</string>
 </resources>

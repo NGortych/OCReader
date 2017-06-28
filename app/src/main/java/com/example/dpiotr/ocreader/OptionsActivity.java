@@ -7,11 +7,9 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
@@ -36,8 +34,6 @@ public class OptionsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.options));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Button toolbarBtn = (Button) findViewById(R.id.toolbar_ok_button);
-        toolbarBtn.setVisibility(View.INVISIBLE);
 
         checkBox = (CheckBox) findViewById(R.id.binarizationOption);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -45,32 +41,6 @@ public class OptionsActivity extends AppCompatActivity {
         spinner = (Spinner) findViewById(R.id.spinner);
 
         spinner.setSelection(MainActivity.getCursor());
-
-    /*    toolbarBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage(R.string.save)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                SharedPreferences sharedPref = getSharedPreferences("OPTIONS", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPref.edit();
-                                editor.putBoolean("binarizationOption", MainActivity.isBinarizationIsOn());
-                                editor.putString("treshold", String.valueOf(MainActivity.getTreshold()));
-                                editor.putInt("cursor", MainActivity.getCursor());
-                                editor.commit();
-                            }
-                        })
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });*/
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -102,8 +72,9 @@ public class OptionsActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                Double d = (((seekBar.getProgress() + 1) * 0.055) + 0.33);
-                treshold.setText(String.valueOf(((seekBar.getProgress() + 1) * 0.055) + 0.33));
+                Double d = (((seekBar.getProgress() + 1.0) * 0.05) + 0.25);
+                String s = String.format("%.2f", ((seekBar.getProgress() + 1.0) * 0.05) + 0.25);
+                treshold.setText(s);
                 MainActivity.setTreshold(d);
             }
 
@@ -145,7 +116,7 @@ public class OptionsActivity extends AppCompatActivity {
                     });
             AlertDialog dialog = builder.create();
             dialog.show();
-                //Call the back button's method
+            //Call the back button's method
             return true;
         }
 
@@ -157,10 +128,10 @@ public class OptionsActivity extends AppCompatActivity {
         if (MainActivity.isBinarizationIsOn()) checkBox.setChecked(true);
         else checkBox.setChecked(false);
         Double d = MainActivity.getTreshold();
-        d = (d - 0.385) / 0.055;
-        Log.d("VALUE", String.valueOf(d));
+        d = ((d - 0.25) / 0.05) - 1.0;
         seekBar.setProgress((int) Math.round(d));
-        treshold.setText(String.valueOf(MainActivity.getTreshold()));
+        String s = String.format("%.2f", MainActivity.getTreshold());
+        treshold.setText(s);
     }
 
 }

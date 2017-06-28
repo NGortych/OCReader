@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -20,9 +18,7 @@ public class AboutActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.about));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Button toolbarBtn = (Button) findViewById(R.id.toolbar_ok_button);
-        toolbarBtn.setVisibility(View.GONE);
-//dsadsadsasa
+
     }
 
     @Override

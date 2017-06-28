@@ -49,26 +49,75 @@ import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int PHOTO_REQUEST = 1;
+    private static final int SELECT_PICTURE = 2;
+    private static final int REQUEST_WRITE_PERMISSION = 20;
+    private static final String SAVED_INSTANCE_URI = "uri";
+    private static final String SAVED_INSTANCE_RESULT = "result";
     /****************OPTIONS VARS*****************/
-    private static int[] scales = {1200, 800, 400};
+    private static int[] scales = {800, 600, 400};
     private static int[] qualities = {100, 95, 90};
     private static boolean binarizationIsOn = false;
     private static int cursor = 0;
-    private static double treshold = 0.44;
+    private static double treshold = 0.45;
+    private final Context context = this;
     /****************END**************************/
     private Toolbar toolbar;
-    private static final int PHOTO_REQUEST = 1;
-    private static final int SELECT_PICTURE = 2;
     private TextView scanResults;
     private Uri imageUri;
     private Uri resultUri;
     private TextRecognizer detector;
-    private static final int REQUEST_WRITE_PERMISSION = 20;
-    private static final String SAVED_INSTANCE_URI = "uri";
-    private static final String SAVED_INSTANCE_RESULT = "result";
 
-    private final Context context = this;
+    public static Bitmap decodeBitmapUri(Context ctx, Uri uri) throws FileNotFoundException {
+        int targetW = scales[cursor];
+        int targetH = scales[cursor];
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(ctx.getContentResolver().openInputStream(uri), null, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
 
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+
+        return BitmapFactory.decodeStream(ctx.getContentResolver()
+                .openInputStream(uri), null, bmOptions);
+    }
+
+    public static boolean isBinarizationIsOn() {
+        return binarizationIsOn;
+    }
+
+    public static void setBinarizationIsOn(boolean binarizationIsOn) {
+        MainActivity.binarizationIsOn = binarizationIsOn;
+    }
+
+    public static void crop(Activity activity, Uri uri) {
+        CropImage.activity(uri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(activity);
+    }
+
+    public static int getCursor() {
+        return cursor;
+    }
+
+    public static void setCursor(int cursor) {
+        MainActivity.cursor = cursor;
+    }
+
+    public static double getTreshold() {
+        return treshold;
+    }
+
+    public static void setTreshold(double treshold) {
+        MainActivity.treshold = treshold;
+    }
+
+    public static int[] getQualities() {
+        return qualities;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +129,10 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
-        Button toolbarBtn = (Button) findViewById(R.id.toolbar_ok_button);
-        toolbarBtn.setVisibility(View.GONE);
 
         SharedPreferences sharedPref = getSharedPreferences("OPTIONS", Context.MODE_PRIVATE);
         binarizationIsOn = sharedPref.getBoolean("binarizationOption", false);
-        treshold = Double.parseDouble(sharedPref.getString("treshold", "0.44"));
+        treshold = Double.parseDouble(sharedPref.getString("treshold", "0.45"));
         cursor = sharedPref.getInt("cursor", 0);
 
         detector = new TextRecognizer.Builder(getApplicationContext()).build();
@@ -120,9 +167,9 @@ public class MainActivity extends AppCompatActivity {
                 final AlertDialog alert = new AlertDialog.Builder(MainActivity.this).create();
                 LayoutInflater inflater = MainActivity.this.getLayoutInflater();
                 View layout = inflater.inflate(R.layout.edit_dialog, null);
-                final EditText editText = (EditText) layout.findViewById(R.id.editText);
+                final EditText editDialogEditText = (EditText) layout.findViewById(R.id.editDialogEditText);
                 alert.setView(layout);
-                editText.setText(scanResults.getText().toString());
+                editDialogEditText.setText(scanResults.getText().toString());
                 alert.show();
 
                 Button button = (Button) layout.findViewById(R.id.saveEditButton);
@@ -134,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                             builder.setMessage(R.string.save_edit)
                                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            scanResults.setText(editText.getText().toString());
+                                            scanResults.setText(editDialogEditText.getText().toString());
                                             alert.dismiss();
                                         }
                                     })
@@ -160,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 final AlertDialog alertSave = new AlertDialog.Builder(MainActivity.this).create();
                 LayoutInflater inflater = MainActivity.this.getLayoutInflater();
                 View layout = inflater.inflate(R.layout.save_dialog, null);
-                final EditText editText2 = (EditText) layout.findViewById(R.id.editText2);
+                final EditText saveDialogEditText = (EditText) layout.findViewById(R.id.saveDialogEditText);
                 alertSave.setView(layout);
                 alertSave.show();
 
@@ -170,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        String fileName =  editText2.getText().toString().trim();
+                        String fileName = saveDialogEditText.getText().toString().trim();
 
 
                         if (fileName.length() != 0) {
@@ -191,14 +238,14 @@ public class MainActivity extends AppCompatActivity {
                                 fOut.flush();
                                 fOut.close();
                                 Toast.makeText(MainActivity.this,
-                                        "Plik zapisano pomyślnie", Toast.LENGTH_LONG).show();
+                                        getResources().getString(R.string.saved), Toast.LENGTH_LONG).show();
                                 alertSave.dismiss();
 
                             } catch (IOException e) {
-                                Log.e("Exception", "File write failed: " + e.toString());
+                                Log.e("Exception: ", getResources().getString(R.string.save_fail) + e.toString());
                             }
                         } else Toast.makeText(MainActivity.this,
-                                "Nie podano pliku!", Toast.LENGTH_LONG).show();
+                                getResources().getString(R.string.add_name), Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -239,14 +286,19 @@ public class MainActivity extends AppCompatActivity {
         openInOtherButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_TEXT, scanResults.getText().toString());
-                    intent.setType("text/plain");
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                }
+                if (scanResults.getText().toString() != getResources().getString(R.string.run_scan) &&
+                        scanResults.getText().toString() != getResources().getString(R.string.scan_fail)) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_SEND);
+                        intent.putExtra(Intent.EXTRA_TEXT, scanResults.getText().toString());
+                        intent.setType("text/plain");
+                        startActivity(intent);
+
+                    } catch (ActivityNotFoundException e) {
+                    }
+                } else
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.cant_send), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -377,23 +429,6 @@ public class MainActivity extends AppCompatActivity {
         this.sendBroadcast(mediaScanIntent);
     }
 
-    public static Bitmap decodeBitmapUri(Context ctx, Uri uri) throws FileNotFoundException {
-        int targetW = scales[cursor];
-        int targetH = scales[cursor];
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(ctx.getContentResolver().openInputStream(uri), null, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-
-        return BitmapFactory.decodeStream(ctx.getContentResolver()
-                .openInputStream(uri), null, bmOptions);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -414,44 +449,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return false;
-    }
-
-
-    public static boolean isBinarizationIsOn() {
-        return binarizationIsOn;
-    }
-
-    public static void setBinarizationIsOn(boolean binarizationIsOn) {
-        MainActivity.binarizationIsOn = binarizationIsOn;
-    }
-
-    public static void crop(Activity activity, Uri uri) {
-        CropImage.activity(uri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                .start(activity);
-    }
-
-    public static int getCursor() {
-        return cursor;
-    }
-
-    public static void setCursor(int cursor) {
-        MainActivity.cursor = cursor;
-    }
-
-    public static double getTreshold() {
-        return treshold;
-    }
-
-    public static void setTreshold(double treshold) {
-        MainActivity.treshold = treshold;
-    }
-
-    public static int[] getScales() {
-        return scales;
-    }
-
-    public static int[] getQualities() {
-        return qualities;
     }
 }

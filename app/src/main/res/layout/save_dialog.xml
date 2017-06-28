@@ -8,42 +8,41 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="93dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/saveDialogHeader"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.29"
-            android:padding="10dp"
             android:gravity="center_vertical"
+            android:padding="10dp"
             android:text="Wprowadz nazwę pliku:"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <View
-            android:id="@+id/view"
+            android:id="@+id/saveDialogSeparator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_weight="0.05"
             android:background="@color/colorPrimaryDark" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/saveDialogEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.29"
             android:ems="10"
             android:hint="Nazwa pliku"
             android:inputType="textPersonName"
-
             android:text="" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="59dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button

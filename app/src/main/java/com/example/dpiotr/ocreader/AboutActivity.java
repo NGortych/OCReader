@@ -22,7 +22,7 @@ public class AboutActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Button toolbarBtn = (Button) findViewById(R.id.toolbar_ok_button);
         toolbarBtn.setVisibility(View.GONE);
-
+//dsadsadsasa
     }
 
     @Override
